@@ -41,18 +41,20 @@ export const loginUser = async(req,res)=>{
         if(!email || !password) {
             return res.status(400).send({message:"email and password are required to login"})
         }
+
         const user = await userSchema.findOne({email}).select("password");
         if(!user){
             return res.status(400).send({message:"user not found"});
         }
         console.log(user);
+
         const isMatch  = await user.comparePassword(password);
+
         console.log(isMatch);
         if(!isMatch){
             return res.status(400).send({message:"Incorrect email or password"});
         }
-        // user.password=undefined;
-        
+        user.password=undefined;
         const token = await user.createJWT();
         console.log(token)
         return res.status(200).send(
