@@ -3,13 +3,16 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import Sidebar from "./component/Sidebar";
 import Navbar from "./component/Navbar";
 import DisplayMovies from "./component/DisplayMovies";
+import DisplaySeries from "./component/DisplaySeries.jsx";
 import AuthPage from "./component/AuthPage";
 import { useSelector, useDispatch } from "react-redux";
 import {setToken} from './reducer/authSlice'
+import UserInfo from "./component/UserInfo";
 function App() {
-
     const dispatch = useDispatch();
-    const { token} = useSelector((state) => state.auth);
+    const { token } = useSelector((state) => state.auth);
+    const [selectedCategory, setSelectedCategory] = useState("movies"); 
+
 
   useEffect(() => {
     const storedToken = sessionStorage.getItem('token');
@@ -36,22 +39,23 @@ function App() {
         <Route path="/login" element={<AuthPage setToken={setToken} token={token} type="login" />} />
 
         <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <div className="grid grid-cols-[280px_1fr] h-screen">
-                <div className="border-r border-r-red-800">
-                  <Sidebar />
-                </div>
-                <div className="bg-black flex flex-col h-screen text-white border-l border-l-gray-500">
-                  <Navbar />
-                  <DisplayMovies />
-                </div>
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <div className="grid grid-cols-[280px_1fr] h-screen">
+              <div className="border-r border-r-red-800">
+                <Sidebar />
               </div>
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
+              <div className="bg-black flex flex-col h-screen text-white border-l border-l-gray-500 transition-all duration-300">
+                <Navbar selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} />
+                {selectedCategory === "movies" ? <DisplayMovies /> : <DisplaySeries />}
+              </div>
+              <UserInfo />
+            </div>
+          </ProtectedRoute>
+        }
+      />
+    </Routes>
     </Router>
   );
 }

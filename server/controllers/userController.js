@@ -42,7 +42,7 @@ export const loginUser = async(req,res)=>{
             return res.status(400).send({message:"email and password are required to login"})
         }
 
-        const user = await userSchema.findOne({email}).select("password");
+        const user = await userSchema.findOne({email});
         if(!user){
             return res.status(400).send({message:"user not found"});
         }
@@ -66,6 +66,7 @@ export const loginUser = async(req,res)=>{
             }
         )
     }catch(err){
+        console.log(err.message)
         return res.status(500).send({message:`${err.message}`})
     }
 }

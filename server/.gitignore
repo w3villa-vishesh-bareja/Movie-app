@@ -1,2 +1,4 @@
 node_modules
 .env 
+
+#first class function , block scope and shadowing , closures , hoisting , higher order function event-loops ,  this keyword , function statement , expression 

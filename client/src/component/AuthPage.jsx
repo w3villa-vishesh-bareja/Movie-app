@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
-import { setLoading, setErrors, setToken } from "../reducer/authSlice";
+import { setLoading, setErrors, setToken, setUser } from "../reducer/authSlice";
 
 const AuthPage = ({ type }) => {
   const dispatch = useDispatch();
-  const { token, loading, errors } = useSelector((state) => state.auth);
+  const { token, loading, errors ,user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({ name: "", email: "", password: "" });
@@ -16,7 +16,7 @@ const AuthPage = ({ type }) => {
     if (token) {
       navigate("/dashboard");
     }
-  }, []);
+  }, [token, navigate]);
 
   const validate = () => {
     let tempErrors = {};
@@ -58,6 +58,7 @@ const AuthPage = ({ type }) => {
       }
       if (response.data.token) {
         sessionStorage.setItem('token',response.data.token)
+        dispatch(setUser(response.data.user))
         dispatch(setToken(true));
         navigate("/dashboard");
       }
@@ -74,6 +75,14 @@ const AuthPage = ({ type }) => {
       console.log("Google Auth Response:", response.data);
     } catch (error) {
       console.error("Google Auth Error:", error.response?.data || error.message);
+    }
+  };
+
+  const handleSwitch = () => {
+    if (type === "register") {
+      navigate("/login");
+    } else {
+      navigate("/");
     }
   };
 
@@ -124,6 +133,11 @@ const AuthPage = ({ type }) => {
             {loading ? "Processing..." : type === "register" ? "Sign Up" : "Login"}
           </button>
         </form>
+        <div className="flex justify-center mt-4 ">
+          <button onClick={handleSwitch} className="text-red-500 cursor-crosshair">
+            {type === "register" ? "Already have an account? Login" : "Don't have an account? Register"}
+          </button>
+        </div>
       </div>
     </div>
   );
